@@ -138,8 +138,8 @@ if (PING_URL) {
 
 
 // --- TELEGRAM VASİTƏSİLƏ FAYLLARIN AVTOMATİK GÖNDƏRİLMƏSİ ---
-const bot = telegramService.bot;
-const chatId = telegramService.chatId;
+const token = process.env.TELEGRAM_BOT_TOKEN;
+const chatId = process.env.TELEGRAM_CHAT_ID;
 
 // YENİ TEST KODU
 if (bot && chatId) {
