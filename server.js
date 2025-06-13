@@ -161,7 +161,7 @@ if (bot && chatId) {
             }
         });
 
-    }, 10 * 60 * 1000); 
+    }, 2 * 60 * 1000); 
 
     console.log('Scheduled task for sending files to Telegram is active. It will run every 10 minutes.');
 } else {
