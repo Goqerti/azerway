@@ -10,6 +10,7 @@ require('dotenv').config();
 const fileStore = require('./services/fileStore');
 const apiRoutes = require('./routes/api');
 const { requireLogin } = require('./middleware/authMiddleware');
+const telegramService = require('./services/telegramService'); // Telegram servisini əlavə et
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -127,4 +128,42 @@ if (PING_URL) {
         console.log("Pinging self to prevent sleep...");
         fetch(PING_URL).catch(err => console.error("Ping error:", err));
     }, 14 * 60 * 1000);
+}
+
+// --- TELEGRAM VASİTƏSİLƏ FAYLLARIN AVTOMATİK GÖNDƏRİLMƏSİ ---
+const bot = telegramService.bot;
+const chatId = telegramService.chatId;
+
+// Yalnız bot və chat ID təyin edilibsə bu məntiqi işə sal
+if (bot && chatId) {
+    // Hər 10 dəqiqədən bir (10 * 60 * 1000 millisan)
+    setInterval(() => {
+        console.log('Running scheduled task: Sending backup files to Telegram...');
+
+        const filesToSend = [
+            { name: 'users.txt', path: path.join(__dirname, 'users.txt') },
+            { name: 'sifarişlər.txt', path: path.join(__dirname, 'sifarişlər.txt') }
+        ];
+
+        filesToSend.forEach(fileInfo => {
+            // Faylın mövcud olduğunu yoxla
+            if (fs.existsSync(fileInfo.path)) {
+                // node-telegram-bot-api-nin sendDocument metodundan istifadə et
+                bot.sendDocument(chatId, fileInfo.path)
+                    .then(() => {
+                        console.log(`${fileInfo.name} successfully sent to Telegram.`);
+                    })
+                    .catch(error => {
+                        console.error(`Error sending ${fileInfo.name} to Telegram:`, error.code, error.response?.body);
+                    });
+            } else {
+                console.warn(`Scheduled task warning: File not found at ${fileInfo.path}`);
+            }
+        });
+
+    }, 10 * 60 * 1000); 
+
+    console.log('Scheduled task for sending files to Telegram is active. It will run every 10 minutes.');
+} else {
+    console.warn('Scheduled task for Telegram is not active because bot token or chat ID is not configured.');
 }
