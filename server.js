@@ -117,3 +117,14 @@ server.on('upgrade', (request, socket, head) => {
         });
     });
 });
+
+// --- RENDER KEEP-ALIVE (YUXUYA GETMƏNİN QARŞISINI ALMAQ) ---
+const PING_URL = process.env.RENDER_EXTERNAL_URL;
+
+if (PING_URL) {
+    // 14 dəqiqədən bir (14 * 60 * 1000 = 840000 ms) özünə sorğu göndərir
+    setInterval(() => {
+        console.log("Pinging self to prevent sleep...");
+        fetch(PING_URL).catch(err => console.error("Ping error:", err));
+    }, 14 * 60 * 1000);
+}
