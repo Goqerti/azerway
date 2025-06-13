@@ -130,10 +130,23 @@ if (PING_URL) {
     }, 14 * 60 * 1000);
 }
 
+// server.js ...
+
+// --- RENDER KEEP-ALIVE ... ---
+
+// ... if (PING_URL) { ... } ...
+
+
 // --- TELEGRAM VASİTƏSİLƏ FAYLLARIN AVTOMATİK GÖNDƏRİLMƏSİ ---
 const bot = telegramService.bot;
 const chatId = telegramService.chatId;
 
+// YENİ TEST KODU
+if (bot && chatId) {
+    bot.sendMessage(chatId, 'Salam, server işə düşdü! Test mesajı.').catch(err => {
+        console.error("TELEGRAM TEST XƏTASI:", err.response.body);
+    });
+}
 // Yalnız bot və chat ID təyin edilibsə bu məntiqi işə sal
 if (bot && chatId) {
     // Hər 10 dəqiqədən bir (10 * 60 * 1000 millisan)
