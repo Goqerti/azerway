@@ -10,7 +10,7 @@ require('dotenv').config();
 const fileStore = require('./services/fileStore');
 const apiRoutes = require('./routes/api');
 const { requireLogin } = require('./middleware/authMiddleware');
-const telegramService = require('./services/telegramService'); // Telegram servisini əlavə et
+const { startBackupSchedule } = require('./services/telegramBackupService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,7 +35,6 @@ app.post('/login', require('./controllers/userController').login);
 app.get('/logout', require('./controllers/userController').logout);
 
 app.get('/', requireLogin, (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-// Add the new user management page route, protected by middleware
 app.get('/users', requireLogin, require('./middleware/authMiddleware').requireOwnerRole, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'users.html'));
 });
@@ -121,62 +120,13 @@ server.on('upgrade', (request, socket, head) => {
 
 // --- RENDER KEEP-ALIVE (YUXUYA GETMƏNİN QARŞISINI ALMAQ) ---
 const PING_URL = process.env.RENDER_EXTERNAL_URL;
-
 if (PING_URL) {
-    // 14 dəqiqədən bir (14 * 60 * 1000 = 840000 ms) özünə sorğu göndərir
     setInterval(() => {
         console.log("Pinging self to prevent sleep...");
         fetch(PING_URL).catch(err => console.error("Ping error:", err));
     }, 14 * 60 * 1000);
 }
 
-// server.js ...
-
-// --- RENDER KEEP-ALIVE ... ---
-
-// ... if (PING_URL) { ... } ...
-
-
-// --- TELEGRAM VASİTƏSİLƏ FAYLLARIN AVTOMATİK GÖNDƏRİLMƏSİ ---
-const token = process.env.TELEGRAM_BOT_TOKEN;
-const chatId = process.env.TELEGRAM_CHAT_ID;
-
-// YENİ TEST KODU
-if (bot && chatId) {
-    bot.sendMessage(chatId, 'Salam, server işə düşdü! Test mesajı.').catch(err => {
-        console.error("TELEGRAM TEST XƏTASI:", err.response.body);
-    });
-}
-// Yalnız bot və chat ID təyin edilibsə bu məntiqi işə sal
-if (bot && chatId) {
-    // Hər 10 dəqiqədən bir (10 * 60 * 1000 millisan)
-    setInterval(() => {
-        console.log('Running scheduled task: Sending backup files to Telegram...');
-
-        const filesToSend = [
-            { name: 'users.txt', path: path.join(__dirname, 'users.txt') },
-            { name: 'sifarişlər.txt', path: path.join(__dirname, 'sifarişlər.txt') }
-        ];
-
-        filesToSend.forEach(fileInfo => {
-            // Faylın mövcud olduğunu yoxla
-            if (fs.existsSync(fileInfo.path)) {
-                // node-telegram-bot-api-nin sendDocument metodundan istifadə et
-                bot.sendDocument(chatId, fileInfo.path)
-                    .then(() => {
-                        console.log(`${fileInfo.name} successfully sent to Telegram.`);
-                    })
-                    .catch(error => {
-                        console.error(`Error sending ${fileInfo.name} to Telegram:`, error.code, error.response?.body);
-                    });
-            } else {
-                console.warn(`Scheduled task warning: File not found at ${fileInfo.path}`);
-            }
-        });
-
-    }, 2 * 60 * 1000); 
-
-    console.log('Scheduled task for sending files to Telegram is active. It will run every 10 minutes.');
-} else {
-    console.warn('Scheduled task for Telegram is not active because bot token or chat ID is not configured.');
-}
+// --- TELEGRAM VASİTƏSİLƏ FAYLLARIN AVTOMATİK GÖNDƏRİLMƏSİ (YENİ SİSTEM) ---
+// Hər 2 dəqiqədən bir faylları göndərmək üçün planlanmış görevi başlat
+startBackupSchedule(2);
