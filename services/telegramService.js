@@ -32,5 +32,7 @@ const formatLog = (user, action) => {
 
 module.exports = {
     sendLog,
-    formatLog
+    formatLog,
+    bot,
+    chatId
 };
