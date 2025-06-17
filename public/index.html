@@ -15,34 +15,41 @@
 <body>
     <header>
         <h1 id="main-header-title">Musa</h1>
-        <nav>
-            <button id="navSatishlarBtn" class="active" data-i18n-key="salesNav">Satışlar</button>
-            <button id="navRezervasiyalarBtn" data-i18n-key="reservationsNav">Rezervasiyalar</button>
-            <button id="navBildirishlerBtn" data-i18n-key="notificationsNav">
-                Bildirişlər
-                <span id="notification-count" class="badge" style="display:none;"></span>
-            </button>
-            <button id="navChatBtn" data-i18n-key="chatNav">Chat</button>
-            <button id="navAxtarishBtn" data-i18n-key="searchNav">Axtarış</button>
-            <button id="navHesabatBtn" data-i18n-key="reportsNav">Hesabat</button>
-            <button id="navBorclarBtn" data-i18n-key="debtsNav">Borclar</button>
-            <button id="settingsBtn" title="Tənzimləmələr"><i class="fa-solid fa-gear"></i></button>
-            <a href="/logout" class="logout-btn" data-i18n-key="logoutNav">Çıxış</a>
-            
-            <div class="lang-switcher-container-header">
-                 <div class="language-switcher" id="lang-switcher-main">
-                    <div class="selected-lang">
-                        <span id="selected-lang-text">Azərbaycanca</span>
-                        <i class="fas fa-chevron-down"></i>
+
+        <div class="nav-container" id="navContainer">
+            <nav>
+                <button id="navSatishlarBtn" class="active" data-i18n-key="salesNav">Satışlar</button>
+                <button id="navRezervasiyalarBtn" data-i18n-key="reservationsNav">Rezervasiyalar</button>
+                <button id="navBildirishlerBtn" data-i18n-key="notificationsNav">
+                    Bildirişlər
+                    <span id="notification-count" class="badge" style="display:none;"></span>
+                </button>
+                <button id="navChatBtn" data-i18n-key="chatNav">Chat</button>
+                <button id="navAxtarishBtn" data-i18n-key="searchNav">Axtarış</button>
+                <button id="navHesabatBtn" data-i18n-key="reportsNav">Hesabat</button>
+                <button id="navBorclarBtn" data-i18n-key="debtsNav">Borclar</button>
+                <button id="settingsBtn" title="Tənzimləmələr"><i class="fa-solid fa-gear"></i></button>
+                <a href="/logout" class="logout-btn" data-i18n-key="logoutNav">Çıxış</a>
+                
+                <div class="lang-switcher-container-header">
+                     <div class="language-switcher" id="lang-switcher-main">
+                        <div class="selected-lang">
+                            <span id="selected-lang-text">Azərbaycanca</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <ul class="lang-options">
+                            <li data-lang="az"><span data-i18n-key="lang_az">Azərbaycanca</span></li>
+                            <li data-lang="en"><span data-i18n-key="lang_en">English</span></li>
+                            <li data-lang="ru"><span data-i18n-key="lang_ru">Русский</span></li>
+                        </ul>
                     </div>
-                    <ul class="lang-options">
-                        <li data-lang="az"><span data-i18n-key="lang_az">Azərbaycanca</span></li>
-                        <li data-lang="en"><span data-i18n-key="lang_en">English</span></li>
-                        <li data-lang="ru"><span data-i18n-key="lang_ru">Русский</span></li>
-                    </ul>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        </div>
+
+        <button class="mobile-menu-toggle-btn" id="mobileMenuToggleBtn">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </header>
 
     <main>
@@ -420,8 +427,21 @@
                 </div>
             </div>
         </div>
+
+        <div id="viewOrderModal" class="modal">
+            <div class="modal-content view-only-modal">
+                <span class="close-button" id="closeViewModalBtn" title="Bağla">&times;</span>
+                <h3 id="viewModalTitle">Sifariş Məlumatları</h3>
+                <div id="viewOrderContent">
+                </div>
+                <button id="printOrderBtn" class="action-btn-print">
+                    <i class="fa-solid fa-print"></i> Çap Et
+                </button>
+            </div>
+        </div>
     </main>
-    </main> <footer class="site-footer">
+
+    <footer class="site-footer">
         <p>&copy; 2025 | Bütün hüquqlar qorunur | <a href="https://wa.me/+994505636801" target="_blank">Şirvan</a> tərəfindən hazırlanıb</p>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
