@@ -18,18 +18,23 @@
 
         <div class="nav-container" id="navContainer">
             <nav>
-                <button id="navSatishlarBtn" class="active" data-i18n-key="salesNav">Satışlar</button>
-                <button id="navRezervasiyalarBtn" data-i18n-key="reservationsNav">Rezervasiyalar</button>
-                <button id="navBildirishlerBtn" data-i18n-key="notificationsNav">
+                <button id="navDashboardBtn" class="nav-element active" data-i18n-key="dashboardNav">Panel</button>
+                <button id="navSatishlarBtn" class="nav-element" data-i18n-key="salesNav">Satışlar</button>
+                <button id="navRezervasiyalarBtn" class="nav-element" data-i18n-key="reservationsNav">Rezervasiyalar</button>
+                <a href="/tasks.html" id="navTasksBtn" class="nav-element">Tapşırıqlar<span id="tasks-count" class="badge" style="display:none;"></span></a>
+                <a href="/transport.html" id="navTransportBtn" class="nav-element">Transport</a>
+                <button id="navBildirishlerBtn" class="nav-element" data-i18n-key="notificationsNav">
                     Bildirişlər
                     <span id="notification-count" class="badge" style="display:none;"></span>
                 </button>
-                <button id="navChatBtn" data-i18n-key="chatNav">Chat</button>
-                <button id="navAxtarishBtn" data-i18n-key="searchNav">Axtarış</button>
-                <button id="navHesabatBtn" data-i18n-key="reportsNav">Hesabat</button>
-                <button id="navBorclarBtn" data-i18n-key="debtsNav">Borclar</button>
-                <button id="settingsBtn" title="Tənzimləmələr"><i class="fa-solid fa-gear"></i></button>
-                <a href="/logout" class="logout-btn" data-i18n-key="logoutNav">Çıxış</a>
+                <button id="navChatBtn" class="nav-element" data-i18n-key="chatNav">Chat</button>
+                <button id="navAxtarishBtn" class="nav-element" data-i18n-key="searchNav">Axtarış</button>
+                <button id="navHesabatBtn" class="nav-element" data-i18n-key="reportsNav">Hesabat</button>
+                <button id="navBorclarBtn" class="nav-element" data-i18n-key="debtsNav">Borclar</button>
+                <a href="/finance.html" id="navFinanceBtn" class="nav-element nav-btn-owner-only" style="display: none;">Maliyyə</a>
+                <button id="settingsBtn" class="nav-element" title="Tənzimləmələr"><i class="fa-solid fa-gear"></i></button>
+                <button id="recycleBinBtn" class="nav-element" title="Zibil Qabı"><i class="fa-solid fa-recycle"></i></button>
+                <a href="/logout" class="nav-element logout-btn" data-i18n-key="logoutNav">Çıxış</a>
                 
                 <div class="lang-switcher-container-header">
                      <div class="language-switcher" id="lang-switcher-main">
@@ -46,22 +51,72 @@
                 </div>
             </nav>
         </div>
-
         <button class="mobile-menu-toggle-btn" id="mobileMenuToggleBtn">
             <i class="fa-solid fa-bars"></i>
         </button>
     </header>
 
     <main>
-        <div id="chatView" style="display: none;">
-            <h2 data-i18n-key="chatNav">Chat</h2>
-            <div class="chat-page-container">
-                <div class="chat-messages" id="chat-messages">
+        <div id="dashboardView">
+             <div class="financial-dashboard-container">
+                <h2>Maliyyə Paneli</h2>
+                <div class="filters-container" style="margin-bottom: 20px;">
+                    <div>
+                        <label for="dashboardMonthFilter">Aya görə filterlə:</label>
+                        <input type="month" id="dashboardMonthFilter">
                     </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Mesajınızı yazın...">
-                    <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                    <button id="resetDashboardFilterBtn" class="filter-reset-btn">Sıfırla</button>
                 </div>
+                <div id="financialDashboard" class="summary-grid">
+                    </div>
+            </div>
+        </div>
+
+        <div id="satishlarView" style="display: none;"> 
+            <h2 data-i18n-key="salesTableTitle">Satışlar Cədvəli</h2>
+            <div class="filters-container">
+                <div><label for="filterRezNo">Rez. №:</label><input type="text" id="filterRezNo" placeholder="Rez. nömrəsi ilə axtar..."></div>
+                <div><label for="filterYear" data-i18n-key="filterByYear">İl:</label><input type="number" id="filterYear" placeholder="YYYY" min="2000" max="2099"></div>
+                <div><label for="filterMonth" data-i18n-key="filterByMonth">Ay:</label><input type="month" id="filterMonth"></div>
+                <div><label for="filterDate" data-i18n-key="filterByDate">Tarix:</label><input type="date" id="filterDate"></div>
+                <button id="applyFiltersBtn" class="filter-apply-btn" data-i18n-key="applyFiltersButton">Filterlə</button>
+                <button id="resetFiltersBtn" class="filter-reset-btn" data-i18n-key="resetFiltersButton">Sıfırla</button>
+            </div>
+            <div class="actions"><button id="showAddOrderFormBtn" class="add-order-btn" data-i18n-key="newOrderButton">Yeni sifariş əlavə et</button></div>
+            <div class="summary-grid">
+                <div class="stat-card"><h4 data-i18n-key="totalOrders">Cəmi Sifarişlər</h4><p id="totalOrders">0</p></div>
+                <div id="totalsByCurrencyContainer" class="currency-cards-container"></div>
+            </div>
+            <div class="table-container" style="margin-top: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Satış №</th><th>Yaradılma Tarixi</th><th>Rez. №</th><th>Turist</th><th>Böyük</th><th>Uşaq</th><th>Xarici şirkət</th><th>Otel Adı (İlk)</th><th>Giriş Tarixi</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Gəlir</th><th>Status</th><th>Əməliyyatlar</th><th>Qeyd</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="rezervasiyalarView" style="display: none;">
+            <h2 data-i18n-key="reservationsNav">Otel Rezervasiyaları</h2>
+            <div class="filters-container reservation-filters">
+                <div><label for="reservationFilterHotelName">Otel Adı:</label><input type="text" id="reservationFilterHotelName" placeholder="Otel adını daxil edin"></div>
+                <div><label for="reservationFilterMonth">Ay (Giriş Tarixinə Görə):</label><input type="month" id="reservationFilterMonth"></div>
+                <div><label for="reservationFilterDate">Tarix (Giriş Tarixinə Görə):</label><input type="date" id="reservationFilterDate"></div>
+                <button id="applyReservationFiltersBtn" class="filter-apply-btn" data-i18n-key="applyFiltersButton">Filterlə</button>
+                <button id="resetReservationFiltersBtn" class="filter-reset-btn" data-i18n-key="resetFiltersButton">Filteri Sıfırla</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Satış №</th><th>Turist</th><th>Otel Adı</th><th>Giriş Tarixi</th><th>Çıxış Tarixi</th><th>Böyük Sayı</th><th>Uşaq Sayı</th><th>Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationsTableBody"></tbody>
+                </table>
             </div>
         </div>
 
@@ -72,189 +127,100 @@
                 <table>
                     <thead>
                         <tr>
-                            <th data-i18n-key="tableHeaderSalesNo">Satış №</th>
-                            <th data-i18n-key="tableHeaderTourist">Turist</th>
-                            <th>Giriş Tarixi</th>
-                            <th>Problem</th>
-                            <th data-i18n-key="tableHeaderOperations">Əməliyyat</th>
+                            <th>Satış №</th><th>Turist</th><th>Giriş Tarixi</th><th>Problem</th><th>Əməliyyat</th>
                         </tr>
                     </thead>
-                    <tbody id="notificationsTableBody">
-                        </tbody>
+                    <tbody id="notificationsTableBody"></tbody>
                 </table>
             </div>
         </div>
         
+        <div id="chatView" style="display: none;">
+            <h2 data-i18n-key="chatNav">Chat</h2>
+            <div class="chat-page-container">
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Mesajınızı yazın..."><button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
         <div id="searchView" style="display: none;">
             <div class="search-container">
                 <h2>Sifariş Axtarışı (Rez. Nömrəsinə Görə)</h2>
                 <div class="search-form">
-                    <input type="text" id="searchInputRezNomresi" placeholder="Rezervasiya nömrəsini daxil edin...">
-                    <button id="searchButton" data-i18n-key="searchButton">Axtar</button>
+                    <input type="text" id="searchInputRezNomresi" placeholder="Rezervasiya nömrəsini daxil edin..."><button id="searchButton" data-i18n-key="searchButton">Axtar</button>
                 </div>
-                <div id="searchResultDisplay" class="search-result-display">
-                    <p>İnvoys yaratmaq üçün rezervasiya nömrəsini daxil edib "Axtar" düyməsini basın.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="satishlarView"> 
-            <h2 data-i18n-key="salesTableTitle">Satışlar Cədvəli</h2>
-            
-            <div class="filters-container">
-                <div>
-                    <label for="filterYear" data-i18n-key="filterByYear">İl:</label>
-                    <input type="number" id="filterYear" placeholder="YYYY" min="2000" max="2099">
-                </div>
-                <div>
-                    <label for="filterMonth" data-i18n-key="filterByMonth">Ay:</label>
-                    <input type="month" id="filterMonth">
-                </div>
-                <div>
-                    <label for="filterDate" data-i18n-key="filterByDate">Tarix:</label>
-                    <input type="date" id="filterDate">
-                </div>
-                <div>
-                    <label for="sortOrder" data-i18n-key="sortByCreation">Sıralama (Yaradılma Tarixinə Görə):</label>
-                    <select id="sortOrder">
-                        <option value="desc" data-i18n-key="sortNewToOld">Yenidən Köhnəyə</option>
-                        <option value="asc" data-i18n-key="sortOldToNew">Köhnədən Yeniyə</option>
-                    </select>
-                </div>
-                <button id="applyFiltersBtn" class="filter-apply-btn" data-i18n-key="applyFiltersButton">Filterlə</button>
-                <button id="resetFiltersBtn" class="filter-reset-btn" data-i18n-key="resetFiltersButton">Filteri Sıfırla</button>
-            </div>
-
-            <div class="actions">
-                <button id="showAddOrderFormBtn" class="add-order-btn" data-i18n-key="newOrderButton">Yeni sifariş əlavə et</button>
-            </div>
-            
-            <div class="summary-grid">
-                <div class="stat-card">
-                    <h4 data-i18n-key="totalOrders">Cəmi Sifarişlər</h4>
-                    <p id="totalOrders">0</p>
-                </div>
-                <div id="totalsByCurrencyContainer" class="currency-cards-container">
-                    </div>
-            </div>
-
-            <div class="table-container" style="margin-top: 20px;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-i18n-key="tableHeaderSalesNo">Satış №</th>
-                            <th data-i18n-key="tableHeaderCreationDate">Yaradılma Tarixi</th> 
-                            <th data-i18n-key="tableHeaderRezNo">Rez. №</th> 
-                            <th data-i18n-key="tableHeaderTourist">Turist</th>
-                            <th data-i18n-key="tableHeaderAdult">Böyük</th> 
-                            <th data-i18n-key="tableHeaderChild">Uşaq</th>  
-                            <th data-i18n-key="tableHeaderForeignCompany">Xarici şirkət</th>
-                            <th data-i18n-key="tableHeaderHotel">Otel Adı (İlk)</th>
-                            <th data-i18n-key="tableHeaderPurchasePrice">Alış Qiyməti</th>
-                            <th data-i18n-key="tableHeaderSalePrice">Satış Qiyməti</th>
-                            <th data-i18n-key="tableHeaderIncome">Gəlir</th>
-                            <th data-i18n-key="tableHeaderStatus">Status</th>
-                            <th data-i18n-key="tableHeaderOperations">Əməliyyatlar</th>
-                            <th data-i18n-key="tableHeaderNote">Qeyd</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="rezervasiyalarView" style="display: none;">
-            <h2 data-i18n-key="reservationsNav">Otel Rezervasiyaları</h2>
-            <div class="filters-container reservation-filters">
-                <div>
-                    <label for="reservationFilterHotelName">Otel Adı:</label>
-                    <input type="text" id="reservationFilterHotelName" placeholder="Otel adını daxil edin">
-                </div>
-                <div>
-                    <label for="reservationFilterMonth">Ay (Giriş Tarixinə Görə):</label>
-                    <input type="month" id="reservationFilterMonth">
-                </div>
-                <div>
-                    <label for="reservationFilterDate">Tarix (Giriş Tarixinə Görə):</label>
-                    <input type="date" id="reservationFilterDate">
-                </div>
-                <div>
-                    <label for="reservationSortOrder">Sıralama (Giriş Tarixinə Görə):</label>
-                    <select id="reservationSortOrder">
-                        <option value="desc" data-i18n-key="sortNewToOld">Yenidən Köhnəyə</option>
-                        <option value="asc" data-i18n-key="sortOldToNew">Köhnədən Yeniyə</option>
-                    </select>
-                </div>
-                <button id="applyReservationFiltersBtn" class="filter-apply-btn" data-i18n-key="applyFiltersButton">Filterlə</button>
-                <button id="resetReservationFiltersBtn" class="filter-reset-btn" data-i18n-key="resetFiltersButton">Filteri Sıfırla</button>
-            </div>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th data-i18n-key="tableHeaderSalesNo">Satış №</th>
-                            <th data-i18n-key="tableHeaderTourist">Turist</th>
-                            <th>Otel Adı</th>
-                            <th>Giriş Tarixi</th>
-                            <th>Çıxış Tarixi</th>
-                            <th data-i18n-key="tableHeaderAdult">Böyük Sayı</th>
-                            <th data-i18n-key="tableHeaderChild">Uşaq Sayı</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reservationsTableBody">
-                        </tbody>
-                </table>
+                <div id="searchResultDisplay" class="search-result-display"><p>İnvoys yaratmaq üçün rezervasiya nömrəsini daxil edib "Axtar" düyməsini basın.</p></div>
             </div>
         </div>
 
         <div id="hesabatView" style="display: none;">
             <h2 data-i18n-key="reportsNav">Hesabatlar</h2>
+            <h4>Xarici Şirkət Üzrə Sifarişlər</h4>
+            <div class="filters-container">
+                <div><label for="companyFilterSelect">Şirkət Seçin:</label><select id="companyFilterSelect"></select></div>
+                <button id="getCompanyReportBtn" class="filter-apply-btn">Sifarişləri Göstər</button>
+            </div>
+            <div id="companyReportSummary" class="summary-grid" style="margin-top: 20px; display: none;"></div>
+            <div id="companyReportResult" class="table-container" style="margin-top: 20px; display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Satış №</th><th>Turist</th><th>Ümumi Alış</th><th>Ümumi Satış</th><th>Gəlir</th><th>Əməliyyatlar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="companyOrdersTableBody"></tbody>
+                </table>
+            </div>
+            <hr style="margin: 40px 0;">
+            <h4>Ümumi Maliyyə Hesabatı</h4>
             <div class="filters-container report-filters"> 
-                <div>
-                    <label for="reportFilterYear">İl:</label>
-                    <input type="number" id="reportFilterYear" placeholder="YYYY" min="2000" max="2099">
-                </div>
-                <div>
-                    <label for="reportFilterMonth">Ay:</label>
-                    <input type="month" id="reportFilterMonth">
-                </div>
-                <div>
-                    <label for="reportFilterHotelName">Otel Adı:</label>
-                    <input type="text" id="reportFilterHotelName" placeholder="Otel adını daxil edin">
-                </div>
+                <div><label for="reportFilterYear">İl:</label><input type="number" id="reportFilterYear" placeholder="YYYY" min="2000" max="2099"></div>
+                <div><label for="reportFilterMonth">Ay:</label><input type="month" id="reportFilterMonth"></div>
+                <div><label for="reportFilterHotelName">Otel Adı:</label><input type="text" id="reportFilterHotelName" placeholder="Otel adını daxil edin"></div>
                 <button id="generateReportBtn" class="filter-apply-btn">Hesabatı Göstər</button>
             </div>
-
-            <div id="reportResultDisplay" class="report-result-display">
-                <p>Hesabatı yaratmaq üçün yuxarıdakı filterləri seçin və "Hesabatı Göstər" düyməsini basın.</p>
-            </div>
+            <div id="reportResultDisplay" class="report-result-display"><p>Hesabatı yaratmaq üçün yuxarıdakı filterləri seçin və "Hesabatı Göstər" düyməsini basın.</p></div>
         </div>
 
         <div id="borclarView" style="display: none;">
             <h2 data-i18n-key="debtsTableTitle">Borclar Cədvəli</h2>
             <div class="filters-container">
-                <div>
-                    <label for="borclarSearchInput" data-i18n-key="searchByCompany">Şirkət Adına Görə Axtar:</label>
-                    <input type="text" id="borclarSearchInput" placeholder="Şirkət adını daxil edin...">
-                </div>
+                <div><label for="borclarSearchInput" data-i18n-key="searchByCompany">Şirkət Adına Görə Axtar:</label><input type="text" id="borclarSearchInput" placeholder="Şirkət adını daxil edin..."></div>
                 <button id="borclarSearchBtn" class="filter-apply-btn" data-i18n-key="searchButton">Axtar</button>
             </div>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th data-i18n-key="debtsHeaderCompany">Şirkət Adı</th>
-                            <th data-i18n-key="tableHeaderSalesNo">Satış №</th>
-                            <th data-i18n-key="tableHeaderTourist">Turist</th>
-                            <th data-i18n-key="debtsHeaderDebtAmount">Borc Məbləği</th>
-                            <th data-i18n-key="debtsHeaderDueDate">Ödəmə Tarixi</th>
-                            <th data-i18n-key="debtsHeaderGoToOrder">Sifarişə Keçid</th>
+                            <th>Şirkət Adı</th><th>Satış №</th><th>Turist</th><th>Borc Məbləği</th><th>Ödəmə Tarixi</th><th>Sifarişə Keçid</th>
                         </tr>
                     </thead>
-                    <tbody id="borclarTableBody">
-                        </tbody>
+                    <tbody id="borclarTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="recycleBinView" style="display: none;">
+            <h2>Zibil Qabı</h2>
+            <p>Burada silinmiş sifarişləri və xərcləri bərpa edə bilərsiniz.</p>
+            <h3>Silinmiş Sifarişlər</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Satış №</th><th>Turist</th><th>Yaradılma Tarixi</th><th>Əməliyyat</th></tr>
+                    </thead>
+                    <tbody id="deletedOrdersTableBody"></tbody>
+                </table>
+            </div>
+            <h3 style="margin-top: 30px;">Silinmiş İnzibati Xərclər</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Paket Tarixi</th><th>Ümumi Məbləğ</th><th>Əlavə edən</th><th>Əməliyyat</th></tr>
+                    </thead>
+                    <tbody id="deletedExpensesTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -265,24 +231,14 @@
                 <h3 data-i18n-key="modalTitleNewOrder">Yeni Sifariş Əlavə Et</h3>
                 <form id="addOrderForm">
                     <h4 data-i18n-key="mainInfo">Əsas Məlumatlar</h4>
-                    <label for="turist" data-i18n-key="touristLabel">Turist:</label>
-                    <input type="text" id="turist" name="turist" required>
+                    <div class="form-group-inline">
+                        <div><label for="adultGuests" data-i18n-key="adultGuestLabel">Böyük Qonaq Sayı:</label><input type="number" id="adultGuests" name="adultGuests" min="1" value="1"></div>
+                        <div><label for="childGuests" data-i18n-key="childGuestLabel">Uşaq Qonaq Sayı:</label><input type="number" id="childGuests" name="childGuests" min="0" value="0"></div>
+                    </div>
+                    <label data-i18n-key="touristLabel">Turistlər:</label>
+                    <div id="touristsContainer" class="dynamic-input-container"></div>
                     <label for="xariciSirket" data-i18n-key="foreignCompanyLabel">Xarici şirkət:</label>
                     <input type="text" id="xariciSirket" name="xariciSirket">
-                    <div class="form-group-inline">
-                        <div>
-                            <label for="adultGuests" data-i18n-key="adultGuestLabel">Böyük Qonaq Sayı:</label>
-                            <input type="number" id="adultGuests" name="adultGuests" min="0" value="1">
-                        </div>
-                        <div>
-                            <label for="childGuests" data-i18n-key="childGuestLabel">Uşaq Qonaq Sayı:</label>
-                            <input type="number" id="childGuests" name="childGuests" min="0" value="0">
-                        </div>
-                         <div>
-                            <label for="vizaSayi" data-i18n-key="visaCountLabel">Viza Sayı:</label>
-                            <input type="number" id="vizaSayi" name="vizaSayi" min="0" value="0">
-                        </div>
-                    </div>
                     <label for="rezNomresi" data-i18n-key="rezNoLabel">Rez. nömrəsi/əməli. nömrəsi:</label>
                     <input type="text" id="rezNomresi" name="rezNomresi" placeholder="Rezervasiya nömrəsini daxil edin"> 
 
@@ -291,13 +247,14 @@
                         <h4 data-i18n-key="hotelInfo">Otel Məlumatları</h4>
                         <button type="button" id="addHotelBtn" class="action-btn-small">+</button>
                     </div>
-                    <div id="hotelEntriesContainer">
-                        </div>
+                    <div id="hotelEntriesContainer"></div>
 
                     <hr>
                     <h4 data-i18n-key="transportInfo">Transport Məlumatları</h4>
-                    <label for="transport_surucuMelumatlari">Tur/Sürücü Məlumatları:</label>
-                    <input type="text" id="transport_surucuMelumatlari" name="transport_surucuMelumatlari">
+                    <div class="form-group-inline">
+                        <div><label for="transport_surucuMelumatlari">Tur/Sürücü Məlumatları:</label><input type="text" id="transport_surucuMelumatlari" name="transport_surucuMelumatlari"></div>
+                        <div><label for="transport_xerci">Transport Xərci:</label><input type="number" id="transport_xerci" name="transport_xerci" class="cost-input" value="0" step="0.01"></div>
+                    </div>
                     <label for="transport_odenisKartMelumatlari">Ödəniş Kart Məlumatları (DİQQƏT: Həssas məlumat!):</label>
                     <input type="text" id="transport_odenisKartMelumatlari" name="transport_odenisKartMelumatlari" placeholder="Yalnız referans və ya son 4 rəqəm">
                     <label for="transport_turTevsiri">Tur Təsviri:</label>
@@ -306,93 +263,43 @@
                     <input type="text" id="transport_elaveXidmetler" name="transport_elaveXidmetler">
 
                     <hr>
-                    <h4 data-i18n-key="financialInfo">Maliyyə Məlumatları (Alış/Satış)</h4>
-                    <div class="form-group-inline">
-                        <div>
-                            <label for="alishAmount">Alış Qiyməti (Avtomatik):</label>
-                            <input type="number" step="0.01" id="alishAmount" name="alishAmount" value="0" readonly>
-                        </div>
-                        <div>
-                            <label for="alishCurrency">Valyuta (Alış):</label>
-                            <select id="alishCurrency" name="alishCurrency">
-                                <option value="AZN" selected>AZN</option>
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group-inline">
-                        <div>
-                            <label for="satishAmount">Satış Qiyməti:</label>
-                            <input type="number" step="0.01" id="satishAmount" name="satishAmount" value="0">
-                        </div>
-                        <div>
-                            <label for="satishCurrency">Valyuta (Satış):</label>
-                            <select id="satishCurrency" name="satishCurrency">
-                                <option value="AZN" selected>AZN</option>
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <hr>
-                    <h4 data-i18n-key="paymentInfo">Ödəniş Məlumatları (Xarici Şirkət)</h4>
-                    <div class="form-group-inline">
-                        <div>
-                            <label for="paymentStatus" data-i18n-key="paymentStatusLabel">Ödəniş Statusu:</label>
-                            <select id="paymentStatus" name="paymentStatus">
-                                <option value="Ödənilməyib" selected data-i18n-key="statusUnpaid">Ödənilməyib</option>
-                                <option value="Ödənilib" data-i18n-key="statusPaid">Ödənilib</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="paymentDueDate" data-i18n-key="paymentDueDateLabel">Gözlənilən Ödəniş Tarixi:</label>
-                            <input type="date" id="paymentDueDate" name="paymentDueDate">
-                        </div>
-                    </div>
-                   
-                    <hr>
                     <h4 data-i18n-key="costDetails">Xərclərin Detalları (Alış Qiymətini Avtomatik Hesablayır)</h4>
                      <div class="form-group-inline">
-                        <div>
-                            <label for="detailedCost_paket">Paket Xərci:</label>
-                            <input type="number" step="0.01" id="detailedCost_paket" name="detailedCost_paket" value="0" class="cost-input">
-                        </div>
-                        <div>
-                            <label for="detailedCost_beledci">Bələdçi Xərci:</label>
-                            <input type="number" step="0.01" id="detailedCost_beledci" name="detailedCost_beledci" value="0" class="cost-input">
-                        </div>
+                        <div><label for="detailedCost_paket">Paket Xərci:</label><input type="number" step="0.01" id="detailedCost_paket" name="detailedCost_paket" value="0" class="cost-input"></div>
+                        <div><label for="detailedCost_beledci">Bələdçi Xərci:</label><input type="number" step="0.01" id="detailedCost_beledci" name="detailedCost_beledci" value="0" class="cost-input"></div>
                     </div>
                      <div class="form-group-inline">
-                        <div>
-                            <label for="detailedCost_muzey">Muzey/Atraksiyon Xərci:</label>
-                            <input type="number" step="0.01" id="detailedCost_muzey" name="detailedCost_muzey" value="0" class="cost-input">
-                        </div>
-                        <div>
-                            <label for="detailedCost_viza">Viza Xərci:</label>
-                            <input type="number" step="0.01" id="detailedCost_viza" name="detailedCost_viza" value="0" class="cost-input">
-                        </div>
+                        <div><label for="detailedCost_muzey">Muzey/Atraksiyon Xərci:</label><input type="number" step="0.01" id="detailedCost_muzey" name="detailedCost_muzey" value="0" class="cost-input"></div>
+                        <div><label for="detailedCost_viza">Viza Xərci:</label><input type="number" step="0.01" id="detailedCost_viza" name="detailedCost_viza" value="0" class="cost-input"></div>
                     </div>
                      <div class="form-group-inline">
-                         <div>
-                            <label for="detailedCost_diger">Digər Xərclər:</label>
-                            <input type="number" step="0.01" id="detailedCost_diger" name="detailedCost_diger" value="0" class="cost-input">
-                        </div>
+                         <div><label for="detailedCost_diger">Digər Xərclər:</label><input type="number" step="0.01" id="detailedCost_diger" name="detailedCost_diger" value="0" class="cost-input"></div>
                         <div></div>
                     </div>
-                    <hr>
 
+                    <hr>
+                    <h4 data-i18n-key="financialInfo">Maliyyə Məlumatları (Alış/Satış)</h4>
+                    <div class="form-group-inline">
+                        <div><label for="alishAmount">Alış Qiyməti (Avtomatik):</label><input type="number" step="0.01" id="alishAmount" name="alishAmount" value="0" readonly></div>
+                        <div><label for="alishCurrency">Valyuta (Alış):</label><select id="alishCurrency" name="alishCurrency"><option value="AZN" selected>AZN</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div>
+                    </div>
+                    <div class="form-group-inline">
+                        <div><label for="satishAmount">Satış Qiyməti:</label><input type="number" step="0.01" id="satishAmount" name="satishAmount" value="0"></div>
+                        <div><label for="satishCurrency">Valyuta (Satış):</label><select id="satishCurrency" name="satishCurrency"><option value="AZN" selected>AZN</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div>
+                    </div>
+
+                    <hr>
                     <h4 data-i18n-key="otherInfo">Digər</h4>
                     <label for="status" data-i18n-key="orderStatusLabel">Status:</label>
-                    <select id="status" name="status">
-                        <option value="Davam edir" selected data-i18n-key="statusInProgress">Davam edir</option>
-                        <option value="Bitdi" data-i18n-key="statusCompleted">Bitdi</option>
-                        <option value="Ləğv edildi" data-i18n-key="statusCancelled">Ləğv edildi</option>
-                    </select>
-
+                    <select id="status" name="status"><option value="Davam edir" selected>Davam edir</option><option value="Bitdi">Bitdi</option><option value="Ləğv edildi">Ləğv edildi</option></select>
                     <label for="qeyd" data-i18n-key="noteLabel">Qeyd (Sifariş üçün ümumi):</label>
                     <input type="text" id="qeyd" name="qeyd">
+                    
+                    <h4 data-i18n-key="paymentInfo">Ödəniş Məlumatları (Xarici Şirkət)</h4>
+                    <div class="form-group-inline">
+                        <div><label for="paymentStatus" data-i18n-key="paymentStatusLabel">Ödəniş Statusu:</label><select id="paymentStatus" name="paymentStatus"><option value="Ödənilməyib" selected>Ödənilməyib</option><option value="Ödənilib">Ödənilib</option></select></div>
+                        <div><label for="paymentDueDate" data-i18n-key="paymentDueDateLabel">Gözlənilən Ödəniş Tarixi:</label><input type="date" id="paymentDueDate" name="paymentDueDate"></div>
+                    </div>
 
                     <button type="submit" data-i18n-key="addOrderButton">Sifarişi Əlavə Et</button>
                 </form>
@@ -406,7 +313,7 @@
                 <form id="noteForm">
                     <input type="hidden" id="noteSatisNo" name="satisNo">
                     <label for="noteText">Qeyd Mətni:</label>
-                    <textarea id="noteText" name="qeyd" rows="6" style="width: calc(100% - 22px); font-size: 0.9em; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 6px;"></textarea>
+                    <textarea id="noteText" name="qeyd" rows="6"></textarea>
                     <button type="submit">Qeydi Yadda Saxla</button>
                 </form>
             </div>
@@ -432,11 +339,8 @@
             <div class="modal-content view-only-modal">
                 <span class="close-button" id="closeViewModalBtn" title="Bağla">&times;</span>
                 <h3 id="viewModalTitle">Sifariş Məlumatları</h3>
-                <div id="viewOrderContent">
-                </div>
-                <button id="printOrderBtn" class="action-btn-print">
-                    <i class="fa-solid fa-print"></i> Çap Et
-                </button>
+                <div id="viewOrderContent"></div>
+                <button id="printOrderBtn" class="action-btn-print"><i class="fa-solid fa-print"></i> Çap Et</button>
             </div>
         </div>
     </main>
